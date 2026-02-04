@@ -1,20 +1,24 @@
-cmake_minimum_required(VERSION 3.16)
-project(project3 LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.28)
+project(Parallelism)
 
-add_executable(project3
-  entrypoint.cpp
-  mod_ops.cpp
-  num_threads.cpp
-  performance.cpp
-  randomize.cpp
-  test.cpp
-  vector_mod.cpp
+set(CMAKE_CXX_STANDARD 20)
+
+find_package(OpenMP)
+
+add_executable(Parallelism
+        entrypoint.cpp
+        mod_ops.cpp
+        num_threads.cpp
+        performance.cpp
+        randomize.cpp
+        test.cpp
+        vector_mod.cpp
 )
 
-target_compile_features(project3 PRIVATE cxx_std_20)
-target_include_directories(project3 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-
-find_package(OpenMP REQUIRED)
-target_link_libraries(project3 PRIVATE OpenMP::OpenMP_CXX)
-
-
+if(OpenMP_FOUND)
+    target_compile_options(Parallelism PUBLIC ${OpenMP_CXX_FLAGS})
+    target_link_libraries(Parallelism PUBLIC ${OpenMP_CXX_FLAGS})
+    target_link_libraries(Parallelism PUBLIC OpenMP::OpenMP_CXX)
+else()
+    message(WARNING "OpenMP not found - using fallback")
+endif()
